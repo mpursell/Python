@@ -61,7 +61,7 @@ def main():
         except IOError:                                         #if an IO error is thrown, catch the exception
             print("File is already open or permission denied")
             exit
-    else:                                                       #if we're not writing, we're appending!
+    elif choice == 'a':                                                       #if we're not writing, we're appending!
         try:
             logfile = open(log_path, 'a')       
             dir_parse(path, logfile,)                           #call parse and search functions 
@@ -69,6 +69,8 @@ def main():
         except IOError:
             print("File is already open or permission denied")
             exit
+    else:
+        print('Choice not recognised!')
 
     
     
