@@ -20,7 +20,7 @@ def dir_parse(path, logfile):
 
     logfile.close()
 
-
+#function for user input
 def question(log_path):
     
     question = input("Do you want to search the log for a file?:  ")
@@ -31,7 +31,7 @@ def question(log_path):
         exit                                                 # if no file search is required, exit program
 
 
-
+#function to find file as regex in log file
 def find_entry(log_path, filename):
 
        print(log_path)
