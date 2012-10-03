@@ -3,7 +3,7 @@
 #
 #Michael Pursell 2012
 
-#!/usr/bin/env/python
+#!/usr/bin/env python
 
 
 import re
