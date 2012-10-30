@@ -46,7 +46,7 @@ def search(readfile):
 		item = searchlist[x]
 		
 		##If else block to catch known good IPs and print them differently to avoid denying them
-		if item == str("62.232.78.170"):
+		if item == str("0.0.0.0"):
 			print("MY IP")
 			x = x +1		
 		elif item ==str("8.8.8.8"):
