@@ -11,7 +11,7 @@ import re
 def main():
 	
 	print("\n****AUTHENTICATION ATTEMPTS SCRIPT****\n")
-	print("\nThis script will list the IP addresses found in the /var/log/auth.log by default\n") 
+	print("This script will list the IP addresses found in the /var/log/auth.log by default and output them in a format ready fro your hosts.deny file\n") 
 	string = raw_input("Please enter 'y' to continue with the default, or 'n' to enter a new filename:  ")
 
 	if string == "y":
@@ -53,11 +53,11 @@ def search(readfile):
 			print("GOOGLE DNS")
 			x = x+1
 		else:
-			print(searchlist[x])
+			print("ALL: "+searchlist[x])
 			x = x+1
 	total = str(searchtotal)
 	print("\nThere are "+total+" IPs in the list\n")
-
+	
 
 if __name__=="__main__":
 	main()
