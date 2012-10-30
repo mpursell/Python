@@ -11,7 +11,7 @@ import re
 def main():
 	
 	print("\n****AUTHENTICATION ATTEMPTS SCRIPT****\n")
-	print("This script will list the IP addresses found in the /var/log/auth.log by default and output them in a format ready fro your hosts.deny file\n") 
+	print("This script will list the IP addresses found in the /var/log/auth.log by default and output them in a format ready for your hosts.deny file\n") 
 	string = raw_input("Please enter 'y' to continue with the default, or 'n' to enter a new filename:  ")
 
 	if string == "y":
