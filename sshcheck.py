@@ -4,61 +4,52 @@
 #Tested with Python 2.7 on Ubuntu 12.04
 #Michael Pursell 2012
 
-import re 
+import re, sys 
 from subprocess import call
 
 def main():
 	
 	print("\n****AUTHENTICATION LOG FILE PARSER****\n")
-	print("This script will list the IP addresses found in the /var/log/auth.log by default and output them in a format ready for your hosts.deny file\n") 
-	string = raw_input("Please enter 'y' to continue with the default, or 'n' to enter a new filename:  ")
+	print("This script will list the IP addresses found in the /var/log/auth.log output them in a format ready for the hosts.deny file\n") 
+	question = raw_input("Please enter 'y' to continue with the default, or 'n' to enter a new filename:  ")
 
-	if string == "y":
-		file = open("/var/log/auth.log")
-		readfile = file.read()
-		search(readfile)
-		file.close()
+	if question == "y":
+		with open('/var/log/auth.log') as file:
+			readfile = file.read()
+			search(readfile)
 		print("****  List of potential scumbags complete!  ****\n")
-	elif string == "n":
+	elif question == "n":
 		filename = raw_input("Enter a file name:  ")
-		file = open(filename)
-		readfile = file.read()
-		search(readfile)
-		file.close()
+		with open(filename) as file:
+			readfile = file.read()
+			search(readfile)
 		print("****  List of potential scumbags complete!  ****\n")
 	else:
 		print("You must enter either y or n!")
+		sys.exit()
 
 
 #function to search the passed in readfile for a regex that matches IP addresses
 def search(readfile):
         search = re.findall("\d+\.\d+\.\d+.\d+", readfile)
-	searchlist = list(set(search)) #turn the list into a set to remove duplicate entries
-	searchtotal = len(searchlist)
-        
-	#set start positions for a couple of variables
-	x = 0
-	item = searchlist[x]
-	
+	searchlist = set(search) #turn the list into a set to remove duplicate entries
+	searchtotal = len(searchlist)	
 
-	#increment position in the searchlist while x is below the number of results in the list
-	while x < searchtotal: 
-		item = searchlist[x]
+	#iterate over the searchlist set
+	for item in searchlist:
 		
-		##If else block to catch known good IPs and remove them from output
-		if item == str("0.0.0.0"): 
-			x = x +1		
-		elif item ==str("8.8.8.8"):
-			x = x+1
+		#If else block to catch known good IPs and print them differently to avoid denying them
+		if item == "0.0.0.0" or item == "8.8.8.8":
+			continue
 		else:
-			print("\nALL: "+searchlist[x]) #outputs the IP in the right format for hosts.deny
+			print("\nALL: {} ".format(item)) #outputs in the right format for hosts.deny
 			country = call("whois "+item+" |grep country", shell=True)#find the country from WHOIS if poss
-			route = call("whois "+item+"|grep route: ", shell = True)#find the CIDR block if poss
+			route = call("whois "+item+"|grep route: ", shell = True)#find the CIDR block is poss
 			print("\n-----------------------------------------------------------")
-			x = x+1
+		
 
-	total = str(searchtotal)
-	print("\nThere are "+total+" IPs in the list\n")
+	
+	print("\nThere are {} IPs in the list\n".format(searchtotal))
 
 	
 
