@@ -7,7 +7,7 @@
 #Michael Pursell 2012
 
 import re, sys 
-from subprocess import call, check_output
+from subprocess import call, check_output, CalledProcessError
 from os import environ
 
 def main():
@@ -41,30 +41,37 @@ def search(readfile):
 	usr = environ['HOME']	
 	
 	with open("{}/ssh_check.log".format(usr),'w')as log:
-
-
+				
+	
 		#iterate over the searchlist set
 		for addr in addr_list:
-
-			#use check output to search WHOIS output line by line for the CIDR block
-			route = ''.join(line for line in check_output(["whois", addr]).splitlines(True)if "route: " in line)
-			
-			#if else block to iterate over searches for route that come up blank
-			if route == '':
-				continue
-			else:
-				#define regex searches for the ip and CIDR block
-				ip = '.'.join(re.findall("\d+\.\d+\.\d+\.\d+", route))
-				cidr = ''.join(re.findall("\/\d\d\s", route))
-				print("\nALL: {}{}".format(ip, cidr))
+		
+			try:
 				
-				#if else to catch 'good' ip blocks and skip writing them to the log file
-				if ip != '0.0.0.0':	#ENTER GOOD IP BLOCKS HERE
-					log.write("ALL: {}{}".format(ip, cidr))
-				else:
+				#use check output to search WHOIS output line by line for the CIDR block
+	                        route = ''.join(line for line in check_output(["whois", addr]).splitlines(True)if "route: " in line)
+
+				#if else block to iterate over searches for route that come up blank
+				if route == '':
 					continue
-	
-	
+				else:
+					#define regex searches for the ip and CIDR block
+					ip = '.'.join(re.findall("\d+\.\d+\.\d+\.\d+", route))
+					cidr = ''.join(re.findall("\/\d\d\s", route))
+					print("\nALL: {}{}".format(ip,cidr))
+
+					#if else to catch known good IP blocks and skip writing them to the log file
+					if ip != "0.0.0.0": #ENTER GOOD IP BLOCKS HERE
+						log.write("ALL: {}{}".format(ip, cidr))
+					else:	
+						continue
+
+			except CalledProcessError: #sometimes WHOIS call returns nothing so a CalledProcessError is thrown from check_output.  
+				continue	
+
+
+
+
 if __name__=="__main__":
 	main()
 
