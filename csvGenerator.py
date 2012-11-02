@@ -7,14 +7,17 @@ def main():
 	csvFile = os.path.join(myPath, myFile)
 
 	with open(csvFile, 'w') as csv:
-		csv.write("Column1, Column2, Column3 \n")
-		x = 0
+		csv.write("Column1, Column2, Column3 \n") #Add column headings into this string
+
+		#initialise some counter variables
+		entries = 0 #csv entries counter
 		y = 0
 		value = 0
 		value2 = 0
-		while x < 5000:
-			key = "Entry{}".format(y)
-			csv.write("{},{},{} \n".format(key, value, value2))
+		while entries < 5000: #set the max number of entries here 
+			key = "Entry{}".format(y) #set up first column variables as "key"
+			csv.write("{},{},{} \n".format(key, value, value2)) #write out the lines
+			#increment the counters
 			x = x+1
 			y = y+1
 			value = value+1
