@@ -18,9 +18,10 @@ def main():
 			key = "Entry{}".format(y) #set up first column variables as "key"
 			csv.write("{},{},{} \n".format(key, value, value2)) #write out the lines
 			#increment the counters
-			x = x+1
+			entries = entries+1
 			y = y+1
 			value = value+1
+			value2 = value2+1
 
 
 
