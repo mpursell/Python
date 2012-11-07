@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #Script to log the contents of a given directory (write new or append current log) to a file with a last modified stamp
 #to a user specified csv file
+#Tested on Windows 7, Python 3.2
 
 #Michael Pursell 2012
 

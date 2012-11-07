@@ -2,6 +2,7 @@
 #
 #Script to merge a directory of log files into one log file
 #Note, make sure the log files are in the right format.  The script will just append the data!
+#Tested on Windows 7, Python 3.2
 #Michael Pursell 2012
 
 import os
