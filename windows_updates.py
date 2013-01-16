@@ -8,14 +8,17 @@ import subprocess, urllib, re, string, sys
 
 def main():
 	
-	#wmi query to output the hotifx ids and URLs to text file
+	#shell out the wmi query to output the hotifx ids and URLs to text file
 	subprocess.call("wmic qfe >> c:\updates.txt", shell=True)
 	
 	#set the input file and initial regex searches up to find the URLs and the KB ids from the txt file
 	with open("c:\updates.txt", 'rb') as inputFile:
 		readFile = inputFile.read()
 		convertedFile = readFile.decode('utf-16') #required to avoid the wide charset that the wmic query outputs
-		urlSearch = re.findall("\S+[=]\d\d\d\d+\s", convertedFile) #regex for URLs
+		
+		#regex for URLs - in this case all the URLs follow this pattern: http://support.microsoft.com/?kbid=2425227
+		urlSearch = re.findall("\S+[=]\d\d\d\d+\s", convertedFile) 
+		
 		updateIDSearch = re.findall("KB\d+\s",convertedFile) #regex for KB ID
 		
 		#call search function
@@ -42,7 +45,8 @@ def search(convertedFile, urlSearch, updateIDSearch):
 			htmlPage = urllib.urlopen(formattedResult)
 			htmlRead = htmlPage.read()
 			
-			#specify start and end html tags and pull the content from inbetween them
+			#specify start and end html tags and pull the content from in-between them
+			#in this case we're only interested in the titles that sit between the <h1> tags
 			startTag = "<h1 class=\"title\" id=\"mt_title\">"
 			endTag = "</h1>"
 			startIndex = htmlRead.find(startTag)+len(startTag)
@@ -53,14 +57,14 @@ def search(convertedFile, urlSearch, updateIDSearch):
 			updateTitleFormatted = updateTitle.replace(',',' ') #remove commas from dates in titles
 			updateTitleString = updateTitleFormatted + ' '
 			
-			
+			#append all our web scraped titles to a list
 			updateTitleList.append(updateTitleString)
 		
 		#dictionary that zips together the list of titles with KB ids
 		updateDict = dict(zip(updateTitleList,updateIDSearch))
 		
 		
-		
+		#iterate over the dictionary and write keys and values to the output file
 		for key, value in updateDict.iteritems():
 			outputFile.write("{}({})\n".format(key,value))	
 
@@ -68,4 +72,3 @@ def search(convertedFile, urlSearch, updateIDSearch):
 			
 if __name__=="__main__":
 	main()
-
