@@ -7,7 +7,7 @@
 import subprocess, urllib, re, string, sys
 
 def main():
-  
+	
 	#wmi query to output the hotifx ids and URLs to text file
 	subprocess.call("wmic qfe >> c:\updates.txt", shell=True)
 	
@@ -21,6 +21,7 @@ def main():
 		#call search function
 		search(convertedFile, urlSearch, updateIDSearch) 
 		
+		print("Completed! Check the root of C: for the updatesOutput.csv")
 		#exit when done
 		sys.exit()
 		
@@ -35,7 +36,7 @@ def search(convertedFile, urlSearch, updateIDSearch):
 	
 	with open("c:\updatesOutput.csv", 'a') as outputFile:
 		for result in urlSearch:
-			formattedResult = string.lstrip(result,'u') #strip the inexplicable leading 'u' from the URLs
+			formattedResult = string.lstrip(result,'u') #strip the leading 'u' from the URLs
 			
 			#open the URL and read the contents
 			htmlPage = urllib.urlopen(formattedResult)
@@ -50,7 +51,7 @@ def search(convertedFile, urlSearch, updateIDSearch):
 			
 			#code to help csv formatting
 			updateTitleFormatted = updateTitle.replace(',',' ') #remove commas from dates in titles
-			updateTitleString = updateTitleFormatted + ','#add a comma at the end of the title
+			updateTitleString = updateTitleFormatted + ' '
 			
 			
 			updateTitleList.append(updateTitleString)
@@ -61,9 +62,10 @@ def search(convertedFile, urlSearch, updateIDSearch):
 		
 		
 		for key, value in updateDict.iteritems():
-			outputFile.write("{}{}\n".format(key,value))	
+			outputFile.write("{}({})\n".format(key,value))	
 
 
 			
 if __name__=="__main__":
 	main()
+
