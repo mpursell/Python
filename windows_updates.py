@@ -1,31 +1,53 @@
 #!/usr/bin/env PYTHON
 #script to query the Windows hotfixes installed, then scrape the titles from the MS KnowledgeBase
 #Output a csv with the results
+#Tested with Python 2.7 under Windows 7
 #Michael Pursell 2013
 ##############################################################################################################
 
-import subprocess, urllib, re, string, sys
+import subprocess, urllib, re, string, sys, os
 
 def main():
 	
-	#shell out the wmi query to output the hotifx ids and URLs to text file
-	subprocess.call("wmic qfe >> c:\updates.txt", shell=True)
+	setupQuery()
 	
-	#set the input file and initial regex searches up to find the URLs and the KB ids from the txt file
-	with open("c:\updates.txt", 'rb') as inputFile:
-		readFile = inputFile.read()
-		convertedFile = readFile.decode('utf-16') #required to avoid the wide charset that the wmic query outputs
+	
+def setupQuery():
+	
+	subprocess.call("cls", shell=True) #clear the terminal
+	print("\n********************************************************************************")
+	print("\nThis script will find the Hotfix IDs and the associated MS KnowledgeBase titles")
+	print("Please make sure that you have a working internet connection!\n")
+	question = raw_input("Proceed? Y/N...  ")
+	
+	
+	if question == "y":
+	
+		#shell out the wmi query to output the hotifx ids and URLs to text file
+		subprocess.call("wmic qfe >> c:\updates.txt", shell=True)
 		
-		#regex for URLs - in this case all the URLs follow this pattern: http://support.microsoft.com/?kbid=2425227
-		urlSearch = re.findall("\S+[=]\d\d\d\d+\s", convertedFile) 
-		
-		updateIDSearch = re.findall("KB\d+\s",convertedFile) #regex for KB ID
-		
-		#call search function
-		search(convertedFile, urlSearch, updateIDSearch) 
-		
-		print("Completed! Check the root of C: for the updatesOutput.csv")
-		#exit when done
+		#set the input file and initial regex searches up to find the URLs and the KB ids from the txt file
+		with open("c:\updates.txt", 'rb') as inputFile:
+			
+			#read in the file and convert it to utf-16,
+			#required to avoid the wide charset that the wmic query outputs
+			readFile = inputFile.read()
+			convertedFile = readFile.decode('utf-16') 
+			
+			#regex for URLs - in this case all the URLs follow this pattern: http://support.microsoft.com/?kbid=2425227
+			urlSearch = re.findall("\S+[=]\d\d\d\d+\s", convertedFile) 
+			
+			updateIDSearch = re.findall("KB\d+\s",convertedFile) #regex for KB ID
+			
+				
+			#call search function
+			search(convertedFile, urlSearch, updateIDSearch) 
+			
+			subprocess.call("cls", shell=True) #Clear the terminal
+			print("Completed! Check the root of C: for the updatesOutput.csv")
+			#exit when done
+			sys.exit()
+	else:
 		sys.exit()
 		
 		
@@ -35,7 +57,7 @@ def search(convertedFile, urlSearch, updateIDSearch):
 	
 	#instantiate an empty list
 	updateTitleList =[]		
-	print("Finding update titles from the Microsoft Knowledge Base.  This may take some time...")
+	print("\nFinding update titles from the Microsoft Knowledge Base.\nThis may take some time...")
 	
 	with open("c:\updatesOutput.csv", 'a') as outputFile:
 		for result in urlSearch:
@@ -68,7 +90,7 @@ def search(convertedFile, urlSearch, updateIDSearch):
 		for key, value in updateDict.iteritems():
 			outputFile.write("{}({})\n".format(key,value))	
 
-
+		
 			
 if __name__=="__main__":
 	main()
