@@ -1,21 +1,22 @@
 #!/usr/bin/env PYTHON
-#!/usr/bin/env PYTHON
 #script to query the Windows hotfixes installed, then scrape the titles from the MS KnowledgeBase
 #Output a csv with the results
 #Tested with Python 2.7 under Windows 7
 #Michael Pursell 2013
 ##############################################################################################################
 
-import subprocess, urllib, re, string, sys, os
+#import subprocess, urllib, re, string, sys, os
 
-def main():
-	
-	setupWMIQuery()
+from subprocess import call
+from urllib import urlopen
+from re import findall
+from string import lstrip
+
 	
 #function to setup some initial parameters and the WMI query	
-def setupWMIQuery():
+def runQuery():
 	
-	subprocess.call("cls", shell=True) #clear the terminal
+	call("cls", shell=True) #clear the terminal
 	print("\n********************************************************************************")
 	print("\nThis script will find the Hotfix IDs and the associated MS KnowledgeBase titles")
 	print("Please make sure that you have a working internet connection!\n")
@@ -25,7 +26,7 @@ def setupWMIQuery():
 	if question == "y":
 	
 		#shell out the wmi query to output the hotifx ids and URLs to text file
-		subprocess.call("wmic qfe >> c:\updates.txt", shell=True)
+		call("wmic qfe >> c:\updates.txt", shell=True)
 		
 		#set the input file and initial regex searches up to find the URLs and the KB ids from the txt file
 		with open("c:\updates.txt", 'rb') as inputFile:
@@ -36,20 +37,20 @@ def setupWMIQuery():
 			convertedFile = readFile.decode('utf-16') 
 			
 			#regex for URLs - in this case all the URLs follow this pattern: http://support.microsoft.com/?kbid=2425227
-			urlSearch = re.findall("\S+[=]\d\d\d\d+\s", convertedFile) 
+			urlSearch = findall("\S+[=]\d\d\d\d+\s", convertedFile) 
 			
-			updateIDSearch = re.findall("KB\d+\s",convertedFile) #regex for KB ID
+			updateIDSearch = findall("KB\d+\s",convertedFile) #regex for KB ID
 			
 				
 			#call search function
 			searchHTML(convertedFile, urlSearch, updateIDSearch) 
 			
-			subprocess.call("cls", shell=True) #Clear the terminal
+			call("cls", shell=True) #Clear the terminal
 			print("Completed! Check the root of C: for the updatesOutput.csv")
 			#exit when done
-			sys.exit()
+			exit()
 	else:
-		sys.exit()
+		exit()
 		
 		
 
@@ -62,10 +63,10 @@ def searchHTML(convertedFile, urlSearch, updateIDSearch):
 	
 	with open("c:\updatesOutput.csv", 'a') as outputFile:
 		for result in urlSearch:
-			formattedResult = string.lstrip(result,'u') #strip the leading 'u' from the URLs after regex search
+			formattedResult = lstrip(result,'u') #strip the leading 'u' from the URLs after regex search
 			
 			#open the URL and read the contents
-			htmlPage = urllib.urlopen(formattedResult)
+			htmlPage = urlopen(formattedResult)
 			htmlRead = htmlPage.read()
 			
 			#specify start and end html tags and pull the content from inbetween them
@@ -91,7 +92,13 @@ def searchHTML(convertedFile, urlSearch, updateIDSearch):
 		for key, value in updateDict.iteritems():
 			outputFile.write("{}({})\n".format(key,value))	
 
-		
+
+
+def main():
+	
+	runQuery()
+			
 			
 if __name__=="__main__":
 	main()
+
