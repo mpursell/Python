@@ -1,4 +1,5 @@
 #!/usr/bin/env PYTHON
+#!/usr/bin/env PYTHON
 #script to query the Windows hotfixes installed, then scrape the titles from the MS KnowledgeBase
 #Output a csv with the results
 #Tested with Python 2.7 under Windows 7
@@ -9,10 +10,10 @@ import subprocess, urllib, re, string, sys, os
 
 def main():
 	
-	setupQuery()
+	setupWMIQuery()
 	
-	
-def setupQuery():
+#function to setup some initial parameters and the WMI query	
+def setupWMIQuery():
 	
 	subprocess.call("cls", shell=True) #clear the terminal
 	print("\n********************************************************************************")
@@ -41,7 +42,7 @@ def setupQuery():
 			
 				
 			#call search function
-			search(convertedFile, urlSearch, updateIDSearch) 
+			searchHTML(convertedFile, urlSearch, updateIDSearch) 
 			
 			subprocess.call("cls", shell=True) #Clear the terminal
 			print("Completed! Check the root of C: for the updatesOutput.csv")
@@ -53,7 +54,7 @@ def setupQuery():
 		
 
 #function to open the URLs, search the HTMl and pull content together into the output file. 
-def search(convertedFile, urlSearch, updateIDSearch):
+def searchHTML(convertedFile, urlSearch, updateIDSearch):
 	
 	#instantiate an empty list
 	updateTitleList =[]		
@@ -61,13 +62,13 @@ def search(convertedFile, urlSearch, updateIDSearch):
 	
 	with open("c:\updatesOutput.csv", 'a') as outputFile:
 		for result in urlSearch:
-			formattedResult = string.lstrip(result,'u') #strip the leading 'u' from the URLs
+			formattedResult = string.lstrip(result,'u') #strip the leading 'u' from the URLs after regex search
 			
 			#open the URL and read the contents
 			htmlPage = urllib.urlopen(formattedResult)
 			htmlRead = htmlPage.read()
 			
-			#specify start and end html tags and pull the content from in-between them
+			#specify start and end html tags and pull the content from inbetween them
 			#in this case we're only interested in the titles that sit between the <h1> tags
 			startTag = "<h1 class=\"title\" id=\"mt_title\">"
 			endTag = "</h1>"
