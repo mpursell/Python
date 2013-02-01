@@ -3,10 +3,10 @@
 # Tested under Windows 7, Python2.7
 # Michael Pursell 2013
 
-#base class
+#base class for all receipes
 class Food():
 
-  Meat = []
+	Meat = []
 	Carbs = []
 	Veg = []
 	Herbs = []
@@ -21,10 +21,12 @@ class Food():
 	Oil = []
 	Fruit = []
 	
-	#function that iterates over the lists of ingredients and adds them to a 'master' list for each recipe
+	#function that iterates over the lists of ingredients and adds them to a 'master' list for each receipe
 	def list_ingredients(self):
 		
 		list = []
+		for meat in self.Meat:
+			list.append(meat)
 		for carbs in self.Carbs:
 			list.append(carbs)
 		for herbs in self.Herbs:
@@ -54,7 +56,7 @@ class Food():
 		return list
 
 		
-#classes that hold the ingredients for each recipe		
+#classes that hold the ingredients for each receipe		
 class Bolognese(Food):
 
 	name = 'Bolognese'
@@ -261,16 +263,55 @@ def main():
 			mealList.append(chickenInCider.name)
 		
 	#always tack on the weekly list
-	shoppingList = shoppingList + weekly.list_ingredients()
+	#shoppingList = shoppingList + weekly.list_ingredients()
 	
 	#make the list a set, this removes duplicates, then convert back to a list 
 	shoppingList = sorted(list(set(shoppingList)))
 	
-	with open("c:\shoppingList.txt",'w') as file:
+	#create an empty list to hold farm shop stuff
+	farmShop = []
 	
-		file.write('List:\n\n')
+	#step through some cases - if a condition is met, add the item to the farm shop list, 
+	#and remove it from the supermarket list
+	for entry in shoppingList:
+		if entry == 'Chicken Breast':
+			farmShopItem = entry
+			farmShop.append(farmShopItem)
+			shoppingList.remove(entry)
+			
+		elif entry == 'Beef Mince':
+			farmShopItem = entry
+			farmShop.append(farmShopItem)
+			shoppingList.remove(entry)
+				
+		elif entry == 'Bacon':
+			farmShopItem = entry
+			farmShop.append(farmShopItem)
+			shoppingList.remove(entry)
+					
+		elif entry == 'Joint / Chicken':
+			farmShopItem = entry
+			farmShop.append(farmShopItem)
+			shoppingList.remove(entry)
+						
+		elif entry == 'Sausages':
+			farmShopItem = entry
+			farmShop.append(farmShopItem)
+			shoppingList.remove(entry)
+
+	
+	
+	with open("c:\\shoppingList.txt",'w') as file:
+	
+		file.write('Supermarket:\n\n')
 		#print the list in a nice pretty format
 		for entry in shoppingList:
+			print(entry) #screen output
+			file.write(entry+'\n') #file output
+			
+		print('\n\n\nFarm Shop:\n')
+		file.write('\nFarm Shop:\n')
+		for entry in farmShop:
 			print(entry)
 			file.write(entry+'\n')
 			
@@ -280,6 +321,8 @@ def main():
 		for entry in mealList:
 			print(entry)
 			file.write(entry+'\n')
+			
+	print('\nCheck c:\shoppingList.txt for your output.')
 			
 	
 	
