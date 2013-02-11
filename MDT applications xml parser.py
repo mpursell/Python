@@ -1,11 +1,10 @@
-#Script to parse the MDT Applications.xml and scrape the 
+#Script to parse the MDT Applications.xml and scrape the
 #name and guid of each application, then store in a dictionary.
 
 #!/usr/env/ PYTHON
 
 
 from xml.dom import minidom
-from xml.dom.minidom import Node
 
 ################set the xml file name here########################
 global xmlFileName
@@ -15,57 +14,50 @@ xmlFileName = "/home/mike/Applications.xml"
 
 
 #function to grab the name and guid from the xml
-def getGuids(xmlfile, nodelist, appDict):
+def getGuids(nodelist, appDict):
   
 	#iterate over our nodes in each 'application' element
 	for item in nodelist:
+
+
+		#find all the tags labelled 'Name'		
+		names = item.getElementsByTagName('Name')
 		
-		#find the name in each element
-		names = xmlfile.getElementsByTagName('Name')
+		#grab the GUIDs from the attributes of the 'application' tag
+		#denoted by 'item'
+		guids = item.getAttributeNode('guid')
 		
-		#for each name we want the guid which is set as an attribute in 
-		#this particular xml file		
 		for name in names:
-
-			#get the attribute and then return its value
-			guids = item.getAttributeNode('guid')
-			guid = guids.value
 			
-			#toxml() outputs the name with leading and trailing <Name> tags
-			#so we'll strip those tags
-			appname = name.toxml()
-			appname = appname.replace('<Name>','')
-			appname = appname.replace('</Name>','')
+			#clean the leading and trailing xml tags from the name	
+			name = name.toxml()
+			name = name.replace('<Name>', '')
+			name = name.replace('</Name>','')
 			
-			#append the clean strings to the blank dictionary
-			appDict [appname]=guid
-
+			#add the items to the dictionary with the guid as the key
+			appDict[guids.value]=name
 	
-	with open('/home/mike/output.txt', 'w') as logFile:
-	#iterate over the dictionary		
-		for entry, value in appDict.iteritems():
-		
-		
-			logFile.write('{}, {}\n'.format (entry, value))
-
-			print ('{} {}'.format (entry, value))
-		
-	return appDict
-			
-
+	#iterate over the dictionary
+	for key, value in appDict.iteritems():
+		print ('{}, {}'.format(key, value))
+	
 
 def main():
-	
+
 	#parse the xml
 	xmlfile = minidom.parse(xmlFileName)
-	
+
 	#apps are wrapped in 'application' elements in this xml
 	nodelist = xmlfile.getElementsByTagName('application')
+
+	
 
 	#create a blank dictionary
 	appDict = {}
 
-	getGuids(xmlfile, nodelist, appDict)
+	getGuids(nodelist, appDict)
+
+
 
 if __name__=="__main__":
 	main()
