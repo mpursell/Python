@@ -6,8 +6,7 @@
 #application names listed.  It will also check the dependencies of the application bundles
 #and list them at the bottom of the output file.
 
-#First you need to set the locations of the xml file, sql results csv and the log file:
-#You also need to make sure that the GUIDs listed below for the app bundles are correct.
+#Don't forget to set your SQL server, username and password!
 
 #Tested with Python 2.7 on Windows 7 
 #Michael Pursell 2013
@@ -17,6 +16,9 @@
 
 from xml.dom import minidom
 import csv
+import pyodbc
+
+#globals probably not really required here
 
 ################set file names here#################################
 global xmlFileName
@@ -30,7 +32,7 @@ sqlFile = "C:\\sqlQuery.csv"
 
 
 
-##########set the guids for application bundles here################
+##########set the MDT guids for application bundles here################
 
 global desktopBundle32
 global desktopBundle64
@@ -75,73 +77,29 @@ def getGuids(nodelist, appList):
 
 			#append tuples of (name, guid) to the list
 			appList.append((name, guids.value))
-			
 
-	
-	
-	#with open(log, 'w') as logFile:
-		
-		#iterate over the list of tuples
-		#for entry in appList:
-		#	logFile.write('{}\n'.format(str(entry)))
 	
 	return appList
 	
-#function to read in the text file from a SQl dump
-#To create the dump execute the query SELECT Role, Applications FROM RoleApplications
+	
+	
+#function to query the SQl database for role and application.
 def sqlQuery(sqlFile,sqlList):
 
-	with open(sqlFile) as sql:
+	#establish the connection
+	cnxn = pyodbc.connect('DRIVER={SQL Server Native Client 10.0};SERVER=*.*.*.*;DATABASE=**;UID=***;PWD=***;Trusted_Connection=Yes')
+	cursor = cnxn.cursor()
+	
+	#SQL statements
+	cursor.execute("SELECT role, applications FROM RoleApplications")
+	rows = cursor.fetchall()
+	
+	#append each row in the results to our sqlList
+	for row in rows:
+		sqlList.append((row.role, row.applications))
 
-		sqlRead = csv.reader(sql, delimiter=',')
-		
-		for line in sqlRead:
-			#print line[0]
-			sqlList.append((line[0], line[1]))
-			
 	return sqlList
 
-			
-def main():
-
-	#parse the xml
-	xmlfile = minidom.parse(xmlFileName)
-
-	#apps are wrapped in 'application' elements in this xml
-	nodelist = xmlfile.getElementsByTagName('application')
-
-	#create a blank apps list
-	appList = []
-
-	#create a blank sql list
-	sqlList = []
-	
-	#create a blank final presentation list
-	finalList= []
-
-	#populate the lists with the returns from the functions
-	appList = getGuids(nodelist, appList)
-	sqlList = sqlQuery(sqlFile, sqlList)
-	
-	#iterate over the lists and match the guids in the tuples[0]
-	with open (log, 'w')as logger:
-		for entry in appList:
-			for item in sqlList:
-				if entry[1] == item[1]:
-					#append the matches to the final list
-					finalList.append((item[0], entry[0]))
-		
-
-		#sort the final list for easier reading and write it out
-		finalList = (sorted(finalList))
-		for listItem in finalList:
-			logger.write('{}, {} \n'.format(listItem[0], listItem[1]))
-					
-	#call function to find bundle dependencies
-	depends(nodelist, appList)
-
-
-	
 #function to find the dependencies of a given application bundle	
 #function fails DRY pretty badly; needs refactoring at some point. 
 
@@ -353,10 +311,48 @@ def depends(nodelist, appList):
 						for app in appList:
 							if name == app[1]:
 								#print app[0]	
-								logger.write('{}\n'.format(app[0]))	
-								
-								
-								
-								
+								logger.write('{}\n'.format(app[0]))		
+
+	
+def main():
+
+	#parse the xml
+	xmlfile = minidom.parse(xmlFileName)
+
+	#apps are wrapped in 'application' elements in this xml
+	nodelist = xmlfile.getElementsByTagName('application')
+
+	#create a blank apps list
+	appList = []
+
+	#create a blank sql list
+	sqlList = []
+	
+	#create a blank final presentation list
+	finalList= []
+
+	#populate the lists with the returns from the functions
+	appList = getGuids(nodelist, appList)
+	sqlList = sqlQuery(sqlFile, sqlList)
+	
+	#iterate over the lists and match the guids in the tuples[0]
+	with open (log, 'w')as logger:
+		for entry in appList:
+			for item in sqlList:
+				if entry[1] == item[1]:
+					#append the matches to the final list
+					finalList.append((item[0], entry[0]))
+		
+
+		#sort the final list for easier reading and write it out
+		finalList = (sorted(finalList))
+		for listItem in finalList:
+			logger.write('{}, {} \n'.format(listItem[0], listItem[1]))
+					
+	#call function to find bundle dependencies
+	depends(nodelist, appList)
+		
+
+
 if __name__=="__main__":
 	main()
