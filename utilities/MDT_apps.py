@@ -30,7 +30,7 @@ xmlFileName = "Y:\\Deploy\\MDSDevelopment\\Control\\Applications.xml"
 #just a text log file with all the build apps logged
 log = "c:\\MDTapps.txt"
 
-blankDoc = 'C:\\Users\\sa_pursellm\\Documents\\Build Docs\\blank_MDS.docx'
+blankDoc = 'C:\\Users\\<username>\\Documents\\Build Docs\\blank_MDS.docx'
 
 
 ##########  MDT guids for application bundles ################
@@ -56,10 +56,10 @@ global sqldatabase
 global sqluser
 global sqlpassword
 
-sqlserver = '10.154.230.53'
-sqldatabase = 'MDT'
-sqluser = 'svc_sqlmdt'
-sqlpassword = 'M1cr0s0ft'
+sqlserver = ''
+sqldatabase = ''
+sqluser = ''
+sqlpassword = ''
 
 ################ VERSIONING INFO NEEDS TO BE SET BY USER ####################
 global docDate
@@ -67,10 +67,10 @@ global docVersion
 global docAuthor
 global docUpdateReason
 
-docDate = '18/02/2013'
-docVersion = '1.0'
-docAuthor = 'Michael Pursell'
-docUpdateReason = 'Q2 2013 Updates'
+docDate = ''
+docVersion = ''
+docAuthor = ''
+docUpdateReason = ''
 
 ######################### CURRENT OPERATING SYSTEMS ########################
 
@@ -78,7 +78,7 @@ global xp
 global sevenpro32
 global sevenpro64
 
-xp = 'Windows XP.  Patched to November 2012'
+xp = 'Windows XP.'
 sevenpro32 = 'Windows 7 Professional 32bit'
 sevenpro64 = 'Windows 7 Professional 64bit'
 
