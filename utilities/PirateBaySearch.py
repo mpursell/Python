@@ -26,17 +26,13 @@ from sys import argv
 textFilePath = ''
 transmissionUser = ''
 transmissionPass = ''
-PirateBayAddress = ''
+PirateBayAddress = 'http://thepiratebeach.eu'
 
 
 def PirateBaySearch(inputList[]):
 
 # function provides the browser operations required to search the Pirate Bay
 
-	# set some variables we know we'll need
-	urlPrefix = PirateBayAddress
-
-	# try block to catch argv errors from not entering a search term at the command line
 	try:
 		
 		# list to hold our magnet links
@@ -62,7 +58,7 @@ def PirateBaySearch(inputList[]):
 			# ignore the robots.txt file and pass a user-agent string that imitates Chrome
 			browser.set_handle_robots(False)
 			browser.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36')]
-			browser.open("http://thepiratebeach.eu")
+			browser.open(PirateBayAddress)
 
 
 			# grab the form.  nr=0 means number 0, i.e the first form on the page
