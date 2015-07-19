@@ -100,17 +100,12 @@ def PirateBaySearch(inputList[]):
 							# some output to pretty it up if running the script manually
 							# OPTIONAL
 							#print link.url
-		
-			else:
-				continue
-				
-				
-		
-		
+
 		return finalLinks	
 		
 				
 	except IndexError:
+		# if the search returns no url, we just want to pass on to the next search item.
 		pass
 	
 		# some output to pretty it up if running the script manually
@@ -126,8 +121,8 @@ def Transmission(urlList):
 	for magnetUrl in urlList:
 		if magnetUrl != None:
 			subprocess.call('transmission-remote -n {}:{} -a {}'.format(tranmissionUser, transmissionPass, magnetUrl), shell=True)
-	else:
-		continue
+		else:
+			continue
 
 		
 
