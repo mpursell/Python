@@ -24,10 +24,10 @@ from bs4 import BeautifulSoup
 
 # SET THESE VARIABLES
 
-textFilePath = '/home/mike/downloads/torrents.txt'
-transmissionUser = 'transmission'
-transmissionPass = 'Accessm3'
-pirateBayAddress = 'http://thepiratebeach.eu'
+textFilePath = ''
+transmissionUser = ''
+transmissionPass = ''
+pirateBayAddress = ''
 
 # global list 
 searchTermsToRetry = []
